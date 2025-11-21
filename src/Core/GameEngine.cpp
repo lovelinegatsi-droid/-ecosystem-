@@ -1,4 +1,4 @@
-#include "Core/GameEngine.hpp" 
+#include "core/GameEngine.h"
 #include <iostream> 
 #include <sstream> 
 namespace Ecosystem { 
@@ -11,9 +11,7 @@ GameEngine::GameEngine(const std::string& title, float width, float height)
       mIsPaused(false), 
       mTimeScale(1.0f), 
       mAccumulatedTime(0.0f) {} 
-// 
-⚙
- INITIALISATION 
+// ⚙ INITIALISATION 
 bool GameEngine::Initialize() { 
     if (!mWindow.Initialize()) { 
         return false; 
@@ -21,19 +19,12 @@ bool GameEngine::Initialize() {
     mEcosystem.Initialize(20, 5, 30);  // 20 herbivores, 5 carnivores, 30 plantes 
     mIsRunning = true; 
     mLastUpdateTime = std::chrono::high_resolution_clock::now(); 
-    std::cout << "
- ✅
- Moteur de jeu initialisé" << std::endl; 
+    std::cout << "✅ Moteur de jeu initialisé" << std::endl; 
     return true; 
 } 
-// 
-�
-�
- BOUCLE PRINCIPALE 
+// ��BOUCLE PRINCIPALE 
 void GameEngine::Run() { 
-    std::cout << "
- 🎯
- Démarrage de la boucle de jeu..." << std::endl; 
+    std::cout << "🎯Démarrage de la boucle de jeu..." << std::endl; 
     while (mIsRunning) { 
         auto currentTime = std::chrono::high_resolution_clock::now(); 
         std::chrono::duration<float> elapsed = currentTime - mLastUpdateTime; 
@@ -48,20 +39,12 @@ void GameEngine::Run() {
     }
         // Limitation à ~60 FPS 
         SDL_Delay(16); 
-// 
-�
-�
- FERMETURE 
+// �� FERMETURE 
 void GameEngine::Shutdown() { 
     mIsRunning = false; 
-    std::cout << "
- 🔄
- Moteur de jeu arrêté" << std::endl; 
+    std::cout << "🔄 Moteur de jeu arrêté" << std::endl; 
 } 
-// 
-�
-�
- GESTION DES ÉVÉNEMENTS 
+// �� GESTION DES ÉVÉNEMENTS 
 void GameEngine::HandleEvents() { 
     SDL_Event event; 
     while (SDL_PollEvent(&event)) { 
@@ -75,9 +58,7 @@ void GameEngine::HandleEvents() {
         } 
     }
  } 
-// 
-⌨
- GESTION DES TOUCHES 
+// ⌨ GESTION DES TOUCHES 
 void GameEngine::HandleInput(SDL_Keycode key) { 
     switch (key) { 
         case SDLK_ESCAPE: 
@@ -105,10 +86,7 @@ void GameEngine::HandleInput(SDL_Keycode key) {
             break; 
     }
  } 
-// 
-�
-�
- MISE À JOUR 
+// �� MISE À JOUR 
 void GameEngine::Update(float deltaTime) { 
     mEcosystem.Update(deltaTime); 
     // Affichage occasionnel des statistiques 
@@ -116,9 +94,7 @@ void GameEngine::Update(float deltaTime) {
     statsTimer += deltaTime; 
     if (statsTimer >= 2.0f) { 
         auto stats = mEcosystem.GetStatistics(); 
-        std::cout << "
- 📊
- Stats - Herbivores: " << stats.totalHerbivores  
+        std::cout << "📊 Stats - Herbivores: " << stats.totalHerbivores  
                   << ", Carnivores: " << stats.totalCarnivores 
                   << ", Plantes: " << stats.totalPlants 
                   << ", Naissances: " << stats.birthsToday 
@@ -126,10 +102,7 @@ void GameEngine::Update(float deltaTime) {
         statsTimer = 0.0f; 
     }
  } 
-// 
-�
-�
- RENDU 
+// �� RENDU 
 void GameEngine::Render() { 
     mWindow.Clear(); 
     // Rendu de l'écosystème 
@@ -138,10 +111,7 @@ void GameEngine::Render() {
     RenderUI(); 
     mWindow.Present(); 
 } 
-// 
-�
-�
- INTERFACE UTILISATEUR 
+// �� INTERFACE UTILISATEUR 
 void GameEngine::RenderUI() { 
     // Pour l'instant, interface texte dans la console 
     // Une vraie interface graphique serait implémentée ici 

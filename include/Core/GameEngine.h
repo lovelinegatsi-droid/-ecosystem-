@@ -1,15 +1,12 @@
 #pragma once 
-#include "../Graphics/Window.hpp" 
-#include "Ecosystem.hpp" 
+#include "../Graphics/Window.h" 
+#include "Ecosystem.h" 
 #include <chrono> 
 namespace Ecosystem { 
 namespace Core { 
 class GameEngine { 
 private: 
-    // 
-�
-�
- ÉTAT DU MOTEUR 
+    // �� ÉTAT DU MOTEUR 
     Graphics::Window mWindow; 
     Ecosystem mEcosystem; 
     bool mIsRunning; 
@@ -23,24 +20,16 @@ public:
     // 🏗 CONSTRUCTEUR 
     GameEngine(const std::string& title, float width, float height); 
      
-    // 
-⚙
- MÉTHODES PRINCIPALES 
+    // ⚙ MÉTHODES PRINCIPALES 
     bool Initialize(); 
     void Run(); 
     void Shutdown(); 
      
-    // 
-�
-�
- GESTION D'ÉVÉNEMENTS 
+    // �� GESTION D'ÉVÉNEMENTS 
     void HandleEvents(); 
     void HandleInput(SDL_Keycode key); 
 private: 
-    // 
-�
-�
- MÉTHODES INTERNES 
+    // �� MÉTHODES INTERNES 
     void Update(float deltaTime); 
     void Render(); 
     void RenderUI(); 
