@@ -22,7 +22,7 @@ struct Vector2D {
     Vector2D operator*(float scalar) const { 
         return Vector2D(x * scalar, y * scalar); 
     }
- }; 
+}; // implementation de la structure vector2D
 struct Color { 
     uint8_t r; 
     uint8_t g; 
@@ -37,6 +37,7 @@ struct Color {
     static Color Green() { return Color(0, 255, 0); } 
     static Color Blue() { return Color(0, 0, 255); } 
 }; 
+
     static Color Yellow() { return Color(255, 255, 0); } 
 struct Food { 
     Vector2D position; 

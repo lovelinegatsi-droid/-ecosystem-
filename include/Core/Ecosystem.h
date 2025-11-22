@@ -21,7 +21,7 @@ private:
     struct Statistics { 
         int totalHerbivores; 
         int totalCarnivores; 
-        int totalPlants; 
+        int totalPlants;
         int totalFood; 
         int deathsToday; 
         int birthsToday; 
@@ -52,8 +52,8 @@ private:
     // �� MÉTHODES PRIVÉES 
     void UpdateStatistics(); 
     void SpawnRandomEntity(EntityType type); 
-    Vector2D GetRandomPosition() const; 
+    Vector2D GetRandomPosition() ; 
     void HandlePlantGrowth(float deltaTime); 
 }; 
 } // namespace Core 
-} // namespace Ecosystem 
+} // namespace Ecosystem    

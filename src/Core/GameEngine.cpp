@@ -1,4 +1,4 @@
-#include "core/GameEngine.h"
+#include "Core/GameEngine.h"
 #include <iostream> 
 #include <sstream> 
 namespace Ecosystem { 
@@ -35,10 +35,13 @@ void GameEngine::Run() {
             Update(deltaTime * mTimeScale); 
         } 
         Render(); 
-} 
-    }
+
         // Limitation à ~60 FPS 
         SDL_Delay(16); 
+    } 
+
+}
+
 // �� FERMETURE 
 void GameEngine::Shutdown() { 
     mIsRunning = false; 
@@ -46,18 +49,22 @@ void GameEngine::Shutdown() {
 } 
 // �� GESTION DES ÉVÉNEMENTS 
 void GameEngine::HandleEvents() { 
+
     SDL_Event event; 
+
     while (SDL_PollEvent(&event)) { 
         switch (event.type) { 
             case SDL_EVENT_QUIT: 
                 mIsRunning = false; 
-                break; 
+            break; 
             case SDL_EVENT_KEY_DOWN: 
                 HandleInput(event.key.key); 
-                break; 
+            break; 
         } 
     }
  } 
+
+
 // ⌨ GESTION DES TOUCHES 
 void GameEngine::HandleInput(SDL_Keycode key) { 
     switch (key) { 
@@ -66,13 +73,13 @@ void GameEngine::HandleInput(SDL_Keycode key) {
             break; 
         case SDLK_SPACE: 
             mIsPaused = !mIsPaused; 
-            std::cout << (mIsPaused ? ⏸Simulation en pause): ▶Simulation rep
+            std::cout << (mIsPaused ? "⏸Simulation en pause" : "▶ Simulation reproduction")<< std::endl ;
             break; 
-        case SDLK_r: 
+        case SDLK_R: 
             mEcosystem.Initialize(20, 5, 30); 
             std::cout << "🔄 Simulation réinitialisée" << std::endl; 
             break; 
-        case SDLK_f: 
+        case SDLK_F: 
             mEcosystem.SpawnFood(10); 
             std::cout << "🍎 Nourriture ajoutée" << std::endl; 
             break; 
@@ -86,6 +93,7 @@ void GameEngine::HandleInput(SDL_Keycode key) {
             break; 
     }
  } 
+
 // �� MISE À JOUR 
 void GameEngine::Update(float deltaTime) { 
     mEcosystem.Update(deltaTime); 
@@ -102,6 +110,8 @@ void GameEngine::Update(float deltaTime) {
         statsTimer = 0.0f; 
     }
  } 
+
+
 // �� RENDU 
 void GameEngine::Render() { 
     mWindow.Clear(); 
@@ -111,6 +121,8 @@ void GameEngine::Render() {
     RenderUI(); 
     mWindow.Present(); 
 } 
+
+
 // �� INTERFACE UTILISATEUR 
 void GameEngine::RenderUI() { 
     // Pour l'instant, interface texte dans la console 

@@ -11,11 +11,14 @@ Ecosystem::Ecosystem(float width, float height, int maxEntities)
     // Initialisation des statistiques 
     mStats = {0, 0, 0, 0, 0, 0}; 
     std::cout << "🌍 Écosystème créé: " << width << "x" << height << std::endl; 
-} 
+}
+
 // 🗑 DESTRUCTEUR 
 Ecosystem::~Ecosystem() { 
     std::cout << "🌍Écosystème détruit (" << mEntities.size() << " entités nettoyé ";
 }
+
+
 // ⚙ INITIALISATION 
 void Ecosystem::Initialize(int initialHerbivores, int initialCarnivores, int initialPlants){
     mEntities.clear(); 
@@ -34,6 +37,7 @@ void Ecosystem::Initialize(int initialHerbivores, int initialCarnivores, int ini
     SpawnFood(20); 
     std::cout << "🌱 Écosystème initialisé avec" << mEntities.size() << "entités" ;
 } 
+
 // �� MISE À JOUR 
 void Ecosystem::Update(float deltaTime) { 
     // Mise à jour de toutes les entités 
@@ -48,7 +52,8 @@ void Ecosystem::Update(float deltaTime) {
     // Mise à jour des statistiques 
     UpdateStatistics(); 
     mDayCycle++; 
-} 
+}
+
 // ��GÉNÉRATION DE NOURRITURE 
 void Ecosystem::SpawnFood(int count) { 
     for (int i = 0; i < count; ++i) { 
@@ -58,6 +63,7 @@ void Ecosystem::SpawnFood(int count) {
         } 
     }
  } 
+
 // �� SUPPRESSION DES ENTITÉS MORTES 
 void Ecosystem::RemoveDeadEntities() { 
     int initialCount = mEntities.size(); 
@@ -72,7 +78,8 @@ void Ecosystem::RemoveDeadEntities() {
     if (removedCount > 0) { 
         mStats.deathsToday += removedCount; 
     }
- } 
+} 
+
 // �� GESTION DE LA REPRODUCTION 
 void Ecosystem::HandleReproduction() { 
     std::vector<std::unique_ptr<Entity>> newEntities; 
@@ -121,7 +128,8 @@ void Ecosystem::UpdateStatistics() {
             break; 
         } 
     }
- } 
+ }
+ 
 // �� CRÉATION D'ENTITÉ ALÉATOIRE 
 void Ecosystem::SpawnRandomEntity(EntityType type) { 
     if (mEntities.size() >= mMaxEntities) return; 
@@ -140,12 +148,14 @@ void Ecosystem::SpawnRandomEntity(EntityType type) {
     }
     mEntities.push_back(std::make_unique<Entity>(type, position, name)); 
 } 
+
 // �� POSITION ALÉATOIRE 
-Vector2D Ecosystem::GetRandomPosition() const { 
+Vector2D Ecosystem::GetRandomPosition() { 
     std::uniform_real_distribution<float> distX(0.0f, mWorldWidth); 
     std::uniform_real_distribution<float> distY(0.0f, mWorldHeight); 
     return {(distX(mRandomGenerator), distY(mRandomGenerator))}; 
 } 
+
 // ��CROISSANCE DES PLANTES 
 void Ecosystem::HandlePlantGrowth(float deltaTime) { 
     // Occasionnellement, faire pousser de nouvelles plantes 

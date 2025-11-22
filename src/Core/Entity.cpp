@@ -69,14 +69,18 @@ void Entity::Update(float deltaTime) {
 } 
 // ��MOUVEMENT 
 void Entity::Move(float deltaTime) { 
-    if (mType == EntityType::PLANT) return;  // Les plantes ne bougent pas 
+    if (mType == EntityType::PLANT) return; 
+     // Les plantes ne bougent pas 
     // �� Comportement aléatoire occasionnel 
+
     std::uniform_real_distribution<float> chance(0.0f, 1.0f); 
     if (chance(mRandomGenerator) < 0.02f) { 
         mVelocity = GenerateRandomDirection(); 
     }
+
     // ��Application du mouvement 
     position = position + mVelocity * deltaTime * 20.0f; 
+
     // �� Consommation d'énergie due au mouvement 
     mEnergy -= mVelocity.Distance(Vector2D(0, 0)) * deltaTime * 0.1f; 
 } 
@@ -118,10 +122,12 @@ void Entity::CheckVitality() {
         std::cout << std::endl; 
     }
  } 
+
 // ��REPRODUCTION 
 bool Entity::CanReproduce() const { 
     return mIsAlive && mEnergy > mMaxEnergy * 0.8f && mAge > 20; 
-} 
+}
+
 std::unique_ptr<Entity> Entity::Reproduce() { 
     if (!CanReproduce()) return nullptr; 
     // ��Chance de reproduction 
@@ -130,13 +136,15 @@ std::unique_ptr<Entity> Entity::Reproduce() {
     }
         mEnergy *= 0.6f;  // Coût énergétique de la reproduction 
         return std::make_unique<Entity>(*this);  // Utilise le constructeur de copi
-    return nullptr; 
+        return nullptr; 
 } 
+
 // �� GÉNÉRATION DE DIRECTION ALÉATOIRE 
 Vector2D Entity::GenerateRandomDirection() { 
     std::uniform_real_distribution<float> dist(-1.0f, 1.0f); 
     return (dist(mRandomGenerator), dist(mRandomGenerator)); 
 } 
+
 // CALCUL DE LA COULEUR BASÉE SUR LÉTAT 
 Color Entity::CalculateColorBasedOnState() const { 
     float energyRatio = GetEnergyPercentage(); 
@@ -149,6 +157,7 @@ Color Entity::CalculateColorBasedOnState() const {
     }
     return baseColor; 
 } 
+
 // ��RENDU GRAPHIQUE 
 void Entity::Render(SDL_Renderer* renderer) const { 
     if (!mIsAlive) return; 
