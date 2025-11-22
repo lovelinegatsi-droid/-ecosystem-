@@ -172,5 +172,6 @@ void Ecosystem::Render(SDL_Renderer* renderer) const {
         entity->Render(renderer); 
     }
 }
+
 } // namespace Core 
 } // namespace ecosystem
