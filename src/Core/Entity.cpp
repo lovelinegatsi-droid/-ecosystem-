@@ -7,9 +7,10 @@ namespace Core {
 // 🏗 CONSTRUCTEUR PRINCIPAL 
 Entity::Entity(EntityType type, Vector2D pos, std::string entityName) 
     : mType(type), position(pos), name(entityName),  
-      mRandomGenerator(std::random_device{}())  // Initialisation du générateur alé
- { 
+      mRandomGenerator(std::random_device{}())  // Initialisation du générateur aléatoire
+{ 
     //INITIALISATION SELON LE TYPE 
+    //
     switch(mType) { 
         case EntityType::HERBIVORE: 
             mEnergy = 80.0f; 
@@ -37,7 +38,7 @@ Entity::Entity(EntityType type, Vector2D pos, std::string entityName)
     mIsAlive = true; 
     mVelocity = GenerateRandomDirection(); 
     std::cout << "🌱 Entité créée: " << name << " à (" << position.x << ", " << position.y << ")";
- } 
+} 
 
 // 🏗 CONSTRUCTEUR DE COPIE 
 Entity::Entity(const Entity& other) 
@@ -51,7 +52,7 @@ Entity::Entity(const Entity& other)
       color(other.color), 
       size(other.size * 0.8f),  // Enfant plus petit 
       mRandomGenerator(std::random_device{}()) 
-{ 
+    { 
  
     std::cout << " 👶 Copie d'entité créée: " << name << std::endl; 
 }
@@ -70,6 +71,7 @@ void Entity::Update(float deltaTime) {
     Move(deltaTime); 
     CheckVitality(); 
 } 
+
 //MOUVEMENT 
 void Entity::Move(float deltaTime) { 
     if (mType == EntityType::PLANT) return;  // Les plantes ne bougent pas 
@@ -79,22 +81,25 @@ void Entity::Move(float deltaTime) {
     if (chance(mRandomGenerator) < 0.02f) { 
         mVelocity = GenerateRandomDirection(); 
     }
-    //Application du mouvement 
+
+    //Application du mouvement
+    //Vector2D pos = Entity::StayInBounds( 600, 1200);  
     position = position + mVelocity * deltaTime * 20.0f; 
     
     // Consommation d'énergie due au mouvement 
     mEnergy -= mVelocity.Distance(Vector2D(0, 0)) * deltaTime * 0.1f; 
 } 
+
 // 🍽 MANGER
- void Entity::Eat(float energy) { 
+void Entity::Eat(float energy) { 
     mEnergy += energy; 
     if (mEnergy > mMaxEnergy) { 
         mEnergy = mMaxEnergy; 
     } 
-        std::cout << "🍽 " << name << " mange et gagne " << energy << " énergie" << std::endl;
-    }
+    std::cout << "🍽 " << name << " mange et gagne " << energy << " énergie" << std::endl;
+}
  
-    //CONSOMMATION D'ÉNERGIE 
+//CONSOMMATION D'ÉNERGIE 
 void Entity::ConsumeEnergy(float deltaTime) { 
     float baseConsumption = 0.0f; 
     switch(mType) { 
@@ -188,6 +193,36 @@ void Entity::Render(SDL_Renderer* renderer) const {
         SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255); 
         SDL_RenderFillRect(renderer, &energyBar); 
     }
- } 
+} 
+
+// Implementation de la fonction permettant de rester dans les environs
+Vector2D Entity::StayInBounds(float worldWidth, float worldHeight) {
+    switch (mType){
+    case EntityType::HERBIVORE:
+        if(position.x < 0) position.x = 0 ;
+        if(position.y < 0) position.y = 0 ;
+        if(position.x < worldWidth) position.x = worldWidth ;
+        if(position.y > worldHeight) position.y = worldHeight ;
+    break;
+    case EntityType::CARNIVORE :
+        if(position.x < 0) position.x = 0 ;
+        if(position.y < 0) position.y = 0 ;
+        if(position.x < worldWidth ) position.x = worldWidth;
+        if(position.y > worldHeight) position.y = worldHeight;
+    break; 
+    }
+
+    return position ;
+};
+
+//qui est sense retourner l'entite vers la proie ou la nourriture la plus proche 
+Vector2D Entity::SeekFood(const std::vector<Food>& foodSources) const {
+    float a = Vector2D::(foodSources.position)
+    float b = Distance()
+    while (mIsAlive){
+        
+    }
+}j
+
 } // namespace Core 
 } // namespace Ecosystem
