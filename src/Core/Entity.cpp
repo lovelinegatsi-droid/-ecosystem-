@@ -74,6 +74,7 @@ void Entity::Update(float deltaTime) {
 
 //MOUVEMENT 
 void Entity::Move(float deltaTime) { 
+    const std::vector<Food> mfoodsource;
     if (mType == EntityType::PLANT) return;  // Les plantes ne bougent pas 
     
     //Comportement aléatoire occasionnel 
@@ -83,12 +84,42 @@ void Entity::Move(float deltaTime) {
     }
 
     //Application du mouvement
-    //Vector2D pos = Entity::StayInBounds( 600, 1200);  
+    Vector2D rapproche = Entity::SeekFood(mfoodsource);
     position = position + mVelocity * deltaTime * 20.0f; 
+    /*const std::vector<Food>& proie{proie.x, proie.y}*/
+    Vector2D rapproche = Entity::SeekFood(mfoodsource);
     
     // Consommation d'énergie due au mouvement 
     mEnergy -= mVelocity.Distance(Vector2D(0, 0)) * deltaTime * 0.1f; 
 } 
+
+//retourner l'entite vers la proie ou la nourriture la plus proche 
+Vector2D Entity::SeekFood(const std::vector<Food>& foodSources) const {
+
+    Entity e;
+    const float To_eat = 10.0f ;
+    Vector2D Near_Of_Food ; // qui est pour localiser la proie la plus proche de son devoreur
+    Vector2D direction(0,0) ; // qui est le vecteur que retournera la fonction
+    // on initialise d'abord la distance minimale a la plus grande distance qu'il peut avoir entre l'entite et sa proie
+    float dist_minimale = std::numeric_limits<float>::max();
+    for(const auto& etre : foodSources){
+       float d = position.Distance(etre.position); // on calcule la distance entre le devoreur et la proie
+       if (d <= dist_minimale){
+            dist_minimale = d ; // on remet la distance minimale a celle encore plus petite qu'elle afin de trouver la proie la plus proche
+            Near_Of_Food = etre.position ; // on affecte a la proie la plus proche la nouvelle position
+       }
+
+       // cas de mangement
+       float energie = etre.energyValue;
+       if (dist_minimale <= To_eat){
+            Entity.Eat(energie);
+       }
+       direction = position.operator+(etre.position) ;
+       //direction = position.operator*(scalar)
+    }
+
+    return direction;
+}
 
 // 🍽 MANGER
 void Entity::Eat(float energy) { 
@@ -201,28 +232,19 @@ Vector2D Entity::StayInBounds(float worldWidth, float worldHeight) {
     case EntityType::HERBIVORE:
         if(position.x < 0) position.x = 0 ;
         if(position.y < 0) position.y = 0 ;
-        if(position.x < worldWidth) position.x = worldWidth ;
+        if(position.x > worldWidth) position.x = worldWidth ;
         if(position.y > worldHeight) position.y = worldHeight ;
     break;
     case EntityType::CARNIVORE :
         if(position.x < 0) position.x = 0 ;
         if(position.y < 0) position.y = 0 ;
-        if(position.x < worldWidth ) position.x = worldWidth;
+        if(position.x > worldWidth ) position.x = worldWidth;
         if(position.y > worldHeight) position.y = worldHeight;
     break; 
     }
 
     return position ;
 };
-
-//qui est sense retourner l'entite vers la proie ou la nourriture la plus proche 
-Vector2D Entity::SeekFood(const std::vector<Food>& foodSources) const {
-    float a = Vector2D::(foodSources.position)
-    float b = Distance()
-    while (mIsAlive){
-        
-    }
-}j
 
 } // namespace Core 
 } // namespace Ecosystem
