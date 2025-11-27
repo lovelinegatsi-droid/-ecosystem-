@@ -2,6 +2,7 @@
 #include <cmath> 
 #include <iostream> 
 #include <algorithm> 
+#include "Structs.h"
 namespace Ecosystem { 
 namespace Core { 
 // 🏗 CONSTRUCTEUR PRINCIPAL 
@@ -85,9 +86,8 @@ void Entity::Move(float deltaTime) {
 
     //Application du mouvement
     Vector2D rapproche = Entity::SeekFood(mfoodsource);
+
     position = position + mVelocity * deltaTime * 20.0f; 
-    /*const std::vector<Food>& proie{proie.x, proie.y}*/
-    Vector2D rapproche = Entity::SeekFood(mfoodsource);
     
     // Consommation d'énergie due au mouvement 
     mEnergy -= mVelocity.Distance(Vector2D(0, 0)) * deltaTime * 0.1f; 
@@ -96,27 +96,33 @@ void Entity::Move(float deltaTime) {
 //retourner l'entite vers la proie ou la nourriture la plus proche 
 Vector2D Entity::SeekFood(const std::vector<Food>& foodSources) const {
 
-    Entity e;
     const float To_eat = 10.0f ;
     Vector2D Near_Of_Food ; // qui est pour localiser la proie la plus proche de son devoreur
     Vector2D direction(0,0) ; // qui est le vecteur que retournera la fonction
     // on initialise d'abord la distance minimale a la plus grande distance qu'il peut avoir entre l'entite et sa proie
+    float deltaTime ;
     float dist_minimale = std::numeric_limits<float>::max();
     for(const auto& etre : foodSources){
-       float d = position.Distance(etre.position); // on calcule la distance entre le devoreur et la proie
-       if (d <= dist_minimale){
+        float d = position.Distance(etre.position); // on calcule la distance entre le devoreur et la proie
+        if (d <= dist_minimale){
             dist_minimale = d ; // on remet la distance minimale a celle encore plus petite qu'elle afin de trouver la proie la plus proche
             Near_Of_Food = etre.position ; // on affecte a la proie la plus proche la nouvelle position
-       }
+        }
 
-       // cas de mangement
-       float energie = etre.energyValue;
-       if (dist_minimale <= To_eat){
-            Entity.Eat(energie);
-       }
-       direction = position.operator+(etre.position) ;
-       //direction = position.operator*(scalar)
+        // cas de mangement
+        float energie = etre.energyValue;
+        if (dist_minimale <= To_eat){
+             //Eat(energie);
+        }
     }
+        direction = Near_Of_Food ;
+
+    /*case EntityType::CARNIVORE :
+
+            float dist_min = std::numeric_limits<float>::max() ;
+            for(const auto& carne : foodSources){
+
+            }*/
 
     return direction;
 }
@@ -128,6 +134,29 @@ void Entity::Eat(float energy) {
         mEnergy = mMaxEnergy; 
     } 
     std::cout << "🍽 " << name << " mange et gagne " << energy << " énergie" << std::endl;
+}
+
+// implementation de la fonction permettant d'eviter les predateurs
+Vector2D AvoidPredators(const std::vector<Entity>& predators){
+
+    Vector2D change_direction ;
+    float dist;
+    const float dist_H = 30.0f;
+    switch(Entity::mtype){
+        case EntityType::HERBIVORE:
+        for(const auto& danger : predators){
+            dist = Vector2D::position.Distance(danger) ;
+            if(dist < dist_H) {
+                change_direction = danger.operator+(danger) ;
+            }
+        }
+    }
+    return change_direction ;
+}
+
+// implementation de celle permettant d'appliquer une force
+void ApplyForce(Vector2D force){
+
 }
  
 //CONSOMMATION D'ÉNERGIE 
