@@ -55,7 +55,7 @@ struct Food {
     
     // Constructeur 
     Food(Vector2D pos, float energy = 25.0f)  
-        : position(pos), energyValue(energy), color(Color::Green()) {} 
+    : position(pos), energyValue(energy), color(Color::Green()) {} 
 }; 
 } // namespace Core 
 } // namespace Ecosystem

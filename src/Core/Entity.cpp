@@ -2,7 +2,7 @@
 #include <cmath> 
 #include <iostream> 
 #include <algorithm> 
-#include "Structs.h"
+//#include "Structs.h"
 namespace Ecosystem { 
 namespace Core { 
 // 🏗 CONSTRUCTEUR PRINCIPAL 
@@ -67,6 +67,7 @@ void Entity::Update(float deltaTime) {
     if (!mIsAlive) return; 
     
     //PROCESSUS DE VIE 
+    ApplyForce(SeekFood(positi)) ;   
     ConsumeEnergy(deltaTime); 
     Age(deltaTime); 
     Move(deltaTime); 
@@ -76,8 +77,9 @@ void Entity::Update(float deltaTime) {
 //MOUVEMENT 
 void Entity::Move(float deltaTime) { 
     const std::vector<Food> mfoodsource;
+    Vector2D rapproche = Entity::SeekFood(mfoodsource);
     if (mType == EntityType::PLANT) return;  // Les plantes ne bougent pas 
-    
+
     //Comportement aléatoire occasionnel 
     std::uniform_real_distribution<float> chance(0.0f, 1.0f); 
     if (chance(mRandomGenerator) < 0.02f) { 
@@ -85,8 +87,15 @@ void Entity::Move(float deltaTime) {
     }
 
     //Application du mouvement
-    Vector2D rapproche = Entity::SeekFood(mfoodsource);
+    StayInBounds(1200, 600) ;
 
+    if(mEnergy < 60){
+        position = position + rapproche * deltaTime * 0.50f ; // on multiplie pas 0.5 pour diminuer la gravite et les faire avance de maniere fluide lorsqu'ils voient la proie
+        if(position.x <= rapproche.x && position.y <= rapproche.y) {
+            Eat(mEnergy) ;
+        }
+    }
+    
     position = position + mVelocity * deltaTime * 20.0f; 
     
     // Consommation d'énergie due au mouvement 
@@ -100,7 +109,7 @@ Vector2D Entity::SeekFood(const std::vector<Food>& foodSources) const {
     Vector2D Near_Of_Food ; // qui est pour localiser la proie la plus proche de son devoreur
     Vector2D direction(0,0) ; // qui est le vecteur que retournera la fonction
     // on initialise d'abord la distance minimale a la plus grande distance qu'il peut avoir entre l'entite et sa proie
-    float deltaTime ;
+
     float dist_minimale = std::numeric_limits<float>::max();
     for(const auto& etre : foodSources){
         float d = position.Distance(etre.position); // on calcule la distance entre le devoreur et la proie
@@ -109,20 +118,9 @@ Vector2D Entity::SeekFood(const std::vector<Food>& foodSources) const {
             Near_Of_Food = etre.position ; // on affecte a la proie la plus proche la nouvelle position
         }
 
-        // cas de mangement
-        float energie = etre.energyValue;
-        if (dist_minimale <= To_eat){
-             //Eat(energie);
-        }
+        direction.x = Near_Of_Food.x - position.x;
+        direction.y = Near_Of_Food.y - position.y ;
     }
-        direction = Near_Of_Food ;
-
-    /*case EntityType::CARNIVORE :
-
-            float dist_min = std::numeric_limits<float>::max() ;
-            for(const auto& carne : foodSources){
-
-            }*/
 
     return direction;
 }
@@ -137,17 +135,18 @@ void Entity::Eat(float energy) {
 }
 
 // implementation de la fonction permettant d'eviter les predateurs
-Vector2D AvoidPredators(const std::vector<Entity>& predators){
-
+Vector2D Entity::AvoidPredators(const std::vector<Entity>& predators) const {
+    
     Vector2D change_direction ;
     float dist;
     const float dist_H = 30.0f;
-    switch(Entity::mtype){
+    switch(mType){
         case EntityType::HERBIVORE:
         for(const auto& danger : predators){
-            dist = Vector2D::position.Distance(danger) ;
+            dist = position.Distance(danger.position) ;
             if(dist < dist_H) {
-                change_direction = danger.operator+(danger) ;
+                change_direction.x = -mVelocity.x ;
+                change_direction.y = -mVelocity.y;
             }
         }
     }
@@ -155,8 +154,10 @@ Vector2D AvoidPredators(const std::vector<Entity>& predators){
 }
 
 // implementation de celle permettant d'appliquer une force
-void ApplyForce(Vector2D force){
+void Entity::ApplyForce(Vector2D force){
 
+    mVelocity.x += force.x ;
+    mVelocity.y += force.y ;
 }
  
 //CONSOMMATION D'ÉNERGIE 
