@@ -4,7 +4,7 @@
 #include <algorithm> 
 //#include "Structs.h"
 namespace Ecosystem { 
-namespace Core { 
+    namespace Core { 
 // 🏗 CONSTRUCTEUR PRINCIPAL 
 Entity::Entity(EntityType type, Vector2D pos, std::string entityName) 
     : mType(type), position(pos), name(entityName),  
@@ -67,7 +67,7 @@ void Entity::Update(float deltaTime) {
     if (!mIsAlive) return; 
     
     //PROCESSUS DE VIE 
-    ApplyForce(SeekFood(positi)) ;   
+   // ApplyForce(SeekFood(positi)) ;   
     ConsumeEnergy(deltaTime); 
     Age(deltaTime); 
     Move(deltaTime); 
@@ -77,7 +77,8 @@ void Entity::Update(float deltaTime) {
 //MOUVEMENT 
 void Entity::Move(float deltaTime) { 
     const std::vector<Food> mfoodsource;
-    Vector2D rapproche = Entity::SeekFood(mfoodsource);
+    const std::vector<Entity> entite;
+    Vector2D rapproche = Entity::SeekFood(mfoodsource, entite);
     if (mType == EntityType::PLANT) return;  // Les plantes ne bougent pas 
 
     //Comportement aléatoire occasionnel 
@@ -86,6 +87,7 @@ void Entity::Move(float deltaTime) {
         mVelocity = GenerateRandomDirection(); 
     }
 
+    Vector2D eloigne= Entity::AvoidPredators(entite);
     //Application du mouvement
     StayInBounds(1200, 600) ;
 
@@ -103,26 +105,57 @@ void Entity::Move(float deltaTime) {
 } 
 
 //retourner l'entite vers la proie ou la nourriture la plus proche 
-Vector2D Entity::SeekFood(const std::vector<Food>& foodSources) const {
-
-    const float To_eat = 10.0f ;
-    Vector2D Near_Of_Food ; // qui est pour localiser la proie la plus proche de son devoreur
-    Vector2D direction(0,0) ; // qui est le vecteur que retournera la fonction
-    // on initialise d'abord la distance minimale a la plus grande distance qu'il peut avoir entre l'entite et sa proie
+Vector2D Entity::SeekFood(const std::vector<Food>& foodSources, const std::vector<Entity>& mtype) const {
 
     float dist_minimale = std::numeric_limits<float>::max();
-    for(const auto& etre : foodSources){
-        float d = position.Distance(etre.position); // on calcule la distance entre le devoreur et la proie
-        if (d <= dist_minimale){
-            dist_minimale = d ; // on remet la distance minimale a celle encore plus petite qu'elle afin de trouver la proie la plus proche
-            Near_Of_Food = etre.position ; // on affecte a la proie la plus proche la nouvelle position
+    Vector2D direction, direction2 ;
+    float dist;
+    for(const auto& etre : mtype){
+        if(etre.mType == EntityType::CARNIVORE ){
+            for (const auto& proie : foodSources){
+                if (etre.mType == EntityType::HERBIVORE){
+                    dist = etre.position.Distance(proie.position) ;
+                    if(dist < dist_minimale){
+                        if (etre.position.x > proie.position.x){
+                            etre.position.x - 1;
+                        }  else if (etre.position.x < proie.position.x){
+                            etre.position.x + 1;
+                        }
+                        if (etre.position.y > proie.position.y){
+                            etre.position.y - 1;
+                        } else if (etre.position.y < proie.position.y){
+                            etre.position.y + 1;
+                        }
+                    }
+                }
+            }
         }
-
-        direction.x = Near_Of_Food.x - position.x;
-        direction.y = Near_Of_Food.y - position.y ;
+        direction = etre.position ;
     }
-
+    for(const auto& etre : mtype){
+        if(etre.mType == EntityType::HERBIVORE ){
+            for (const auto& proie : foodSources){
+                if (etre.mType == EntityType::PLANT){
+                    dist = etre.position.Distance(proie.position) ;
+                    if(dist < dist_minimale){
+                        if (etre.position.x > proie.position.x){
+                            etre.position.x - 1;
+                        }  else if (etre.position.x < proie.position.x){
+                            etre.position.x + 1;
+                        }
+                        if (etre.position.y > proie.position.y){
+                            etre.position.y - 1;
+                        } else if (etre.position.y < proie.position.y){
+                            etre.position.y + 1;
+                        }
+                    }
+                }
+            }
+        }
+        direction2 = etre.position ;
+    }
     return direction;
+    return direction2 ;
 }
 
 // 🍽 MANGER
@@ -145,8 +178,8 @@ Vector2D Entity::AvoidPredators(const std::vector<Entity>& predators) const {
         for(const auto& danger : predators){
             dist = position.Distance(danger.position) ;
             if(dist < dist_H) {
-                change_direction.x = -mVelocity.x ;
-                change_direction.y = -mVelocity.y;
+                change_direction.x = -danger.position.x;
+                change_direction.y = -danger.position.y;
             }
         }
     }

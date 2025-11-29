@@ -56,7 +56,7 @@ public:
     Vector2D GetVelocity() const { return mVelocity; } 
     
     // MÉTHODES DE COMPORTEMENT 
-    Vector2D SeekFood(const std::vector<Food>& foodSources) const; 
+    Vector2D SeekFood(const std::vector<Food>& foodSources, const std::vector<Entity>& mtype) const; 
     Vector2D AvoidPredators(const std::vector<Entity>& predators) const; 
     Vector2D StayInBounds(float worldWidth, float worldHeight); 
     
