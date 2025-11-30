@@ -186,16 +186,19 @@ namespace Ecosystem {
         }
 
         // implementation de addfood
-        /*void Ecosystem::AddFood(Vector2D position, float energy = 25.0f){
-            
-        }*/
+        void Ecosystem::AddFood(Vector2D position, float energy){
+            Food new_food(position, energy) ;
+            if (mEntities.size() >= mMaxEntities) return; 
+            else{
+                mFoodSources.push_back(new_food); // a travers le std::vector <food> mfoodsources , on ajoute la nouvelle nourriture cree 
+            }
+        }
 
         // implementation de addentity
-       /*void Ecosystem::AddEntity(std::unique_ptr<Entity> entity){
-            for (auto& entite : entity){
-                entite.pushback() ;
-            }
-        }*/
+       void Ecosystem::AddEntity(std::unique_ptr<Entity> entity){
+            if (mEntities.size() < mMaxEntities) return ;
+            else mEntities.push_back(std::move(entity)) ;
+        }
 
     } // namespace Core 
 } // namespace Ecosystem
