@@ -86,12 +86,12 @@ namespace Ecosystem {
                 mVelocity = GenerateRandomDirection(); 
             }
 
+            //Application du mouvement
             Vector2D eloigne = Entity::AvoidPredators(entite);
             ApplyForce(eloigne) ;
-            //Application du mouvement
             StayInBounds(1200, 600) ;
 
-            if(mEnergy < 60){
+            if(mEnergy < 60.0f){
                 position = position + rapproche * deltaTime * 0.50f ; // on multiplie pas 0.5 pour diminuer la gravite et les faire avance de maniere fluide lorsqu'ils voient la proie
                 if(position.x <= rapproche.x && position.y <= rapproche.y) {
                     Eat(mEnergy) ;
