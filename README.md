@@ -1,6 +1,6 @@
-**#BIENVENUE DANS NOTRE NOUVEAU PROJET**
+#**BIENVENUE DANS NOTRE NOUVEAU PROJET**
 
-**#🦒🦒 ECOSYSTEM 🦕🦕**
+#**🦒🦒 ECOSYSTEM 🦕🦕**
 
 Pour cette implementaton, vous aurez besoin des connaissance sur:
 - l'encapsulation;  
@@ -8,9 +8,35 @@ Pour cette implementaton, vous aurez besoin des connaissance sur:
 - les structures;  
 - les namespace;  
 - les vector;  
-- en programmation orientee objet
+- en programmation orientee objet  
+- constructeur et destructeurs  
 
 pour cela l'organisation se fera en modulaire d'où la presence des fichires tels que ecosystem.h, entity.h, gameengine.h, structs.h renderer.h et window.h selon la structure du devoir
+
+ecosystem_simulator/  
+├── include/  
+│   ├── Core/  
+│   │   ├── Structs.h  
+│   │   ├── Entity.h  
+│   │   └── Ecosystem.h  
+│   │   │__GameEngine.h  
+│   │
+│   └── Graphics/  
+│       ├── Window.h  
+│       └── Renderer.h  
+├── src/  
+│   ├── Core/  
+│   │   ├── Entity.cpp  
+│   │   └── Ecosystem.cpp  
+│   │   │__GameEngine.cpp  
+│   │
+│   ├── Graphics/  
+│   │   ├── Window.cpp  
+│   │   └── Renderer.cpp  
+│   └── main.cpp  
+├── assets/  
+│   └── (futures textures)  
+└── README.md  
 
 # DEBUT DE L'IMPLEMENTATION
 
