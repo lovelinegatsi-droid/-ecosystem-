@@ -1,6 +1,6 @@
-**BIENVENUE DANS NOTRE NOUVEAU PROJET**
+**#BIENVENUE DANS NOTRE NOUVEAU PROJET**
 
-**🦒🦒 ECOSYSTEM 🦕🦕**
+**#🦒🦒 ECOSYSTEM 🦕🦕**
 
 Pour cette implementaton, vous aurez besoin des connaissance sur:
 - l'encapsulation;  
