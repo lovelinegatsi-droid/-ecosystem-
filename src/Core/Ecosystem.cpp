@@ -100,13 +100,44 @@ namespace Ecosystem {
 
         // 🍽 GESTION DE L'ALIMENTATION 
         void Ecosystem::HandleEating() { 
+            const std::vector<Entity> entite;
+            const float dist_requise = 5.0f;
             // Ici on implémenterait la logique de recherche de nourriture 
             // Pour l'instant, gestion simplifiée 
-            for (auto& entity : mEntities) { 
+            for (auto& entity : mEntities) {
                 if (entity->GetType() == EntityType::PLANT) { 
                     // Les plantes génèrent de l'énergie 
                     entity->Eat(0.1f); 
                 } 
+                /*if (entity->GetType() == EntityType::CARNIVORE){
+                    if (entity ->GetEnergy() < 80.0){
+                        entity -> position = entity->SeekFood(mFoodSources, entite) ;
+                        entity->Move(deltatime) ;
+                        entity->ApplyForce(0.03f) ;
+                    }
+                }
+                if(entity ->GetType() == EntityType::HERBIVORE){
+                    if (entity ->GetEnergy() < 60){
+                        entity -> position = entity ->SeekFood(mFoodSources, entite) ;
+                        entity->ApplyForce(0.03f) ;
+                    }
+                }*/
+
+               for (auto& Food : mFoodSources){
+                    float distance_de_danger = entity->position.Distance(Food.position) ;
+                    if ( dist_requise == distance_de_danger){
+                        float mEnergy =  entity->GetEnergy() ;
+                        switch (entity->GetType())
+                        {
+                            case EntityType::HERBIVORE:
+                                mEnergy += 50.0f ;
+                                
+                            break;
+                            case EntityType::CARNIVORE :
+                                mEnergy += 80.0f;
+                        }
+                    }
+                }
             }
         } 
 

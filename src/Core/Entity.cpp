@@ -90,13 +90,6 @@ namespace Ecosystem {
             Vector2D eloigne = Entity::AvoidPredators(entite);
             ApplyForce(eloigne) ;
             StayInBounds(1200, 600) ;
-
-            if(mEnergy < 60.0f){
-                position = position + rapproche * deltaTime * 0.50f ; // on multiplie pas 0.5 pour diminuer la gravite et les faire avance de maniere fluide lorsqu'ils voient la proie
-                if(position.x <= rapproche.x && position.y <= rapproche.y) {
-                    Eat(mEnergy) ;
-                }
-            }
             
             position = position + mVelocity * deltaTime * 20.0f; 
             
@@ -104,65 +97,46 @@ namespace Ecosystem {
             mEnergy -= mVelocity.Distance(Vector2D(0, 0)) * deltaTime * 0.1f; 
         } 
 
-        //retourner l'entite vers la proie ou la nourriture la plus proche 
-        Vector2D Entity::SeekFood(const std::vector<Food>& foodSources, const std::vector<Entity>& mtype) const {
+        Vector2D Entity::SeekFood(const std::vector<Food>& foodSources, const std::vector<Entity>& entity) const {
+            Vector2D desiredDirection(0.0f, 0.0f);
+            float closestDistance = std::numeric_limits<float>::max();
 
-            float dist_minimale = std::numeric_limits<float>::max();
-            Vector2D direction, direction2 ;
-            float dist;
-            for(const auto& etre : mtype){
-                if(etre.mType == EntityType::CARNIVORE ){
-                    for (const auto& proie : foodSources){
-                        if (etre.mType == EntityType::HERBIVORE){
-                            dist = etre.position.Distance(proie.position) ;
-                            if(dist < dist_minimale){
-                                if (etre.position.x > proie.position.x){
-                                    etre.position.x - 1;
-                                }  else if (etre.position.x < proie.position.x){
-                                    etre.position.x + 1;
-                                }
-                                if (etre.position.y > proie.position.y){
-                                    etre.position.y - 1;
-                                } else if (etre.position.y < proie.position.y){
-                                    etre.position.y + 1;
-                                }
-                            }
+            if (mType == EntityType::HERBIVORE) {
+                // Chercher de la nourriture végétale
+                for (const auto& food : foodSources) {
+                    float distance = position.Distance(food.position);
+                    if (distance < closestDistance) {
+                        closestDistance = distance;
+                        desiredDirection = Vector2D(food.position.x - position.x, food.position.y - position.y);
+                    }
+                }
+            } else if (mType == EntityType::CARNIVORE) {
+                // Chercher des herbivores
+                for (const auto& prey : entity) {
+                    if (prey.GetType() == EntityType::HERBIVORE && prey.IsAlive()) {
+                        float distance = position.Distance(prey.position);
+                        if (distance < closestDistance) {
+                            closestDistance = distance;
+                            desiredDirection = Vector2D(prey.position.x - position.x, prey.position.y - position.y);
                         }
                     }
                 }
-                direction = etre.position ;
-                direction = direction.operator* (5.0f) ;
-
             }
-            for(const auto& etre : mtype){
-                if(etre.mType == EntityType::HERBIVORE ){
-                    for (const auto& proie : foodSources){
-                        if (etre.mType == EntityType::PLANT){
-                            dist = etre.position.Distance(proie.position) ;
-                            if(dist < dist_minimale){
-                                if (etre.position.x > proie.position.x){
-                                    etre.position.x - 1;
-                                }  else if (etre.position.x < proie.position.x){
-                                    etre.position.x + 1;
-                                }
-                                if (etre.position.y > proie.position.y){
-                                    etre.position.y - 1;
-                                } else if (etre.position.y < proie.position.y){
-                                    etre.position.y + 1;
-                                }
-                            }
-                        }
-                    }
-                }
-                direction2 = etre.position ;
-                direction2 = direction2.operator* (5.0f) ;
+            
+            // Normalisation de la direction
+            float length = std::sqrt(desiredDirection.x * desiredDirection.x + desiredDirection.y * desiredDirection.y);
+            if (length > 0.0f) {
+                desiredDirection.x /= length;
+                desiredDirection.y /= length;
             }
-            return direction;
-            return direction2 ;
+            
+            return desiredDirection ;
         }
+        //retourner l'entite vers la proie ou la nourriture la plus proche 
 
         // 🍽 MANGER
         void Entity::Eat(float energy) { 
+            const float dist_requise = 5.0f;
             mEnergy += energy; 
             if (mEnergy > mMaxEnergy) { 
                 mEnergy = mMaxEnergy; 
@@ -171,23 +145,32 @@ namespace Ecosystem {
         }
 
         // implementation de la fonction permettant d'eviter les predateurs
+
         Vector2D Entity::AvoidPredators(const std::vector<Entity>& predators) const {
-            
-            Vector2D change_direction ;
-            float dist;
-            const float dist_H = 100.0f;
-            switch(mType){
-                case EntityType::HERBIVORE:
-                for(const auto& danger : predators){
-                    dist = position.Distance(danger.position) ;
-                    if(dist < dist_H) {
-                        change_direction.x = position.x - danger.position.x;
-                        change_direction.y = position.y - danger.position.y;
+            Vector2D fleeDirection(0.0f, 0.0f);
+
+            if (mType != EntityType::HERBIVORE) {
+                return fleeDirection;  // Seuls les herbivores évitent les prédateurs
+            }
+
+            for (const auto& predator : predators) {
+                if (predator.IsAlive() && predator.GetType() == EntityType::CARNIVORE) {
+                    float distance = position.Distance(predator.position);
+                    if (distance < 50.0f) {  // Seuil de détection
+                        fleeDirection.x += position.x - predator.position.x;
+                        fleeDirection.y += position.y - predator.position.y;
                     }
-                    change_direction = change_direction.operator*(3.0f) ;
                 }
             }
-            return change_direction ;
+            
+            // Normalisation de la direction
+            float length = std::sqrt(fleeDirection.x * fleeDirection.x + fleeDirection.y * fleeDirection.y);
+            if (length > 0.0f) {
+                fleeDirection.x /= length;
+                fleeDirection.y /= length;
+            }
+            
+            return fleeDirection;
         }
 
         // implementation de celle permettant d'appliquer une force
