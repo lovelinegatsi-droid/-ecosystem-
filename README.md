@@ -126,9 +126,51 @@ void Ecosystem::AddFood(Vector2D position, float energy){
 }  
 
 **principe :** _ce dernier permet d'ajouter des nourriture qui seront consommes selon le type de l'entite_
-je vous conseille de lire le reste des fonctions implementes et surtout n'hesitez pas a me poser des questions en cas de non comprehension du programme  
+😉😉😉je vous conseille de lire le reste des fonctions implementes et surtout n'hesitez pas a me poser des questions en cas de non comprehension du programme  
+#include "Core/GameEngine.h"   
+#include <iostream>  
+#include <cstdlib>  
+#include <ctime>  
+#include <windows.h>  
 
-**NB:** Pour la compilation, il faut utiliser :  
+int main(int argc, char* argv[]) {  
+    SetConsoleOutputCP(CP_UTF8);  
+    // Initialisation de l'aléatoire   
+    std::srand(static_cast<unsigned int>(std::time(nullptr)));  
+     
+    std::cout << "🎮Démarrage du Simulateur d'Écosystème" << std::endl;  
+    std::cout << "=======================================" << std::endl;  
+     
+    // 🏗 Création du moteur de jeu   
+    Ecosystem::Core::GameEngine engine("Simulateur d'Écosystème Intelligent", 1200.0f, 800.0f);  
+     
+    // Initialisation   
+    if (!engine.Initialize()) {  
+        std::cerr << "❌Erreur: Impossible d'initialiser le moteur de jeu" << std::endl;  
+        return -1;  
+    }  
+     
+    std::cout << "✅Moteur initialisé avec succès" << std::endl;   
+    std::cout << "🎯Lancement de la simulation..." << std::endl;  
+    std::cout << "=== CONTRÔLES ===" << std::endl;  
+    std::cout << "ESPACE: Pause/Reprise" << std::endl;   
+    std::cout << "R: Reset simulation" << std::endl;   
+    std::cout << "F: Ajouter nourriture" << std::endl;   
+    std::cout << "FLÈCHES: Vitesse simulation" << std::endl;   
+    std::cout << "ÉCHAP: Quitter" << std::endl;  
+     
+    // Boucle principale   
+    engine.Run();   
+     
+    // Arrêt propre  
+    engine.Shutdown();  
+     
+    std::cout << "👋Simulation terminée. Au revoir !" << std::endl;   
+    return 0;  
+}  
+
+A la fin de cet exercice vous serez enrichit sur plusieurs notions du c++ donc a plus pour le prochain projet !!!  
+**NB:** 🤓🤓🤓🤓🤓Pour la compilation, il faut utiliser :  
 g++ -std=c++17 -Iinclude -o ecosystem src/*.cpp src/Core/*.cpp src/Graphics/*.cpp -lSDL3  
 
 Quant a l'execution, il faut faire comme d'habitude  
